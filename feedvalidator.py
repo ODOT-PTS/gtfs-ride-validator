@@ -374,7 +374,7 @@ class HTMLCountingProblemAccumulator(LimitPerTypeProblemAccumulator):
         summary = ('<span class="fail">Found these problems:</span>\n%s' %
                    self.CountTable())
     else:
-      summary = '<span class="pass">feed validated successfully</span>'
+      summary = '<span class="pass">GTFS feed validated successfully</span><br><span class="pass">GTFS-Ride feed validated successfully</span>'
 
     if self.HasNotices():
       summary = ('<h3 class="issueHeader">Notices:</h3>' + 
@@ -447,6 +447,7 @@ GTFS validation results for feed:<br>
 <code><span class="path">%(feed_dir)s</span><b>%(feed_file)s</b></code><br>
 FeedValidator extension used: %(extension)s
 <br><br>
+GTFS:<br>
 <table>
 <tr><th class="header">Agencies:</th><td class="header">%(agencies)s</td></tr>
 <tr><th class="header">Routes:</th><td class="header">%(routes)s</td></tr>
@@ -454,6 +455,14 @@ FeedValidator extension used: %(extension)s
 <tr><th class="header">Trips:</th><td class="header">%(trips)s</td></tr>
 <tr><th class="header">Shapes:</th><td class="header">%(shapes)s</td></tr>
 <tr><th class="header">Effective:</th><td class="header">%(dates)s</td></tr>
+</table>
+<br>
+GTFS Ride:<br>
+<table>
+<tr><th class="header">Agencies:</th><td class="header">TODO</td></tr>
+<tr><th class="header">Routes:</th><td class="header">TODO</td></tr>
+<tr><th class="header">Stops:</th><td class="header">TODO</td></tr>
+
 </table>
 %(calendar_summary)s
 <br>
