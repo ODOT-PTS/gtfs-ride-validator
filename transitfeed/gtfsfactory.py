@@ -30,6 +30,10 @@ from stop import Stop
 from stoptime import StopTime
 from transfer import Transfer
 from trip import Trip
+from board_alight import Board_alight
+from ride_feed_info import Ride_feed_info
+from rider_trip import Rider_trip
+from ridership import Ridership
 
 class GtfsFactory(object):
   """A factory for the default GTFS objects"""
@@ -53,7 +57,11 @@ class GtfsFactory(object):
       'Transfer': Transfer,
       'Trip': Trip,
       'Schedule': Schedule,
-      'Loader': Loader
+      'Loader': Loader,
+      'Board_alight':Board_alight,
+      'Ride_feed_info':Ride_feed_info,
+      'Rider_trip':Rider_trip,
+      'Ridership':Ridership
     }
 
     self._file_mapping = {
@@ -95,6 +103,18 @@ class GtfsFactory(object):
 
         'trips.txt': { 'required': True, 'loading_order': 40,
                        'classes': ['Trip']},
+
+        'board_alight.txt': { 'required': True, 'loading_order': 110,
+                       'classes': ['Board_alight']},
+
+        'ride_feed_info.txt': { 'required': True, 'loading_order': 120,
+                       'classes': ['Ride_feed_info']},
+
+        'rider_trip.txt': { 'required': True, 'loading_order': 130,
+                       'classes': ['Rider_trip']},
+                       
+        'ridership.txt': { 'required': True, 'loading_order': 140,
+                       'classes': ['Ridership']},
 
         }
 

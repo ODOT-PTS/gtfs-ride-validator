@@ -459,9 +459,10 @@ GTFS:<br>
 <br>
 GTFS Ride:<br>
 <table>
-<tr><th class="header">Agencies:</th><td class="header">TODO</td></tr>
-<tr><th class="header">Routes:</th><td class="header">TODO</td></tr>
-<tr><th class="header">Stops:</th><td class="header">TODO</td></tr>
+<tr><th class="header">Board_alight:</th><td class="header">TODO</td></tr>
+<tr><th class="header">Ride_feed_info:</th><td class="header">TODO</td></tr>
+<tr><th class="header">Rider_trip:</th><td class="header">TODO</td></tr>
+<tr><th class="header">Ridership:</th><td class="header">TODO</td></tr>
 
 </table>
 %(calendar_summary)s
