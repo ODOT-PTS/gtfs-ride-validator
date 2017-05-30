@@ -1,5 +1,6 @@
 from problems import default_problem_reporter
 from gtfsobjectbase import GtfsObjectBase
+import util
 
 class Board_alight(GtfsObjectBase):
   """This class represents a rule that determines which itineraries a
@@ -19,56 +20,67 @@ class Board_alight(GtfsObjectBase):
                                          'source']
   _TABLE_NAME = "board_alight"
 
-  def __init__(self, fare_id=None, route_id=None,
-               origin_id=None, destination_id=None, contains_id=None,
-               field_dict=None):
+  def __init__(self,name=None,stop_id = None,trip_id = None,boardings=None,alightings=None,bike_boardings=None,
+              bike_alightings=None,ramp_boardings=None,ramp_alightings=None,board_date=None,
+              board_time=None,current_load=None,source=None,field_dict=None,**kwargs):
     self._schedule = None
-    (self.fare_id, self.route_id, self.origin_id, self.destination_id,
-     self.contains_id) = \
-     (fare_id, route_id, origin_id, destination_id, contains_id)
-    if field_dict:
-      if isinstance(field_dict, self.GetGtfsFactory().FareRule):
-        # Special case so that we don't need to re-parse the attributes to
-        # native types iteritems returns all attributes that don't start with _
-        for k, v in field_dict.iteritems():
-          self.__dict__[k] = v
-      else:
-        self.__dict__.update(field_dict)
 
-    # canonicalize non-content values as None
-    if not self.route_id:
-      self.route_id = None
-    if not self.origin_id:
-      self.origin_id = None
-    if not self.destination_id:
-      self.destination_id = None
-    if not self.contains_id:
-      self.contains_id = None
+    if not field_dict:
+      if stop_id:
+        kwargs['stop_id'] = stop_id
+      if trip_id:
+        kwargs['trip_id'] = trip_id
+      if boardings:
+        kwargs['boardings'] = boardings
+      if alightings:
+        kwargs['alightings'] = alightings
+      if bike_boardings:
+        kwargs['bike_boardings'] = bike_boardings
+      if bike_alightings:
+        kwargs['bike_alightings'] = bike_alightings
+      if ramp_boardings:
+        kwargs['ramp_boardings'] = ramp_boardings
+      if ramp_alightings:
+        kwargs['ramp_alightings'] = ramp_alightings
+      if board_date:
+        kwargs['board_date'] = board_date
+      if board_time:
+        kwargs['board_time'] = board_time
+      if current_load:
+        kwargs['current_load'] = current_load
+      if source:
+        kwargs['source'] = source
+      field_dict = kwargs
+    self.__dict__.update(field_dict)
 
-  def GetFieldValuesTuple(self):
-    return [getattr(self, fn) for fn in self._FIELD_NAMES]
+  #def validateStopID(self,problems):
+    #return not util.ValidateID(self.stop_id, 'stop_id', problems)
 
-  def __getitem__(self, name):
-    return getattr(self, name)
+  def ValidateSId(self, problems):
+    if util.IsEmpty(self.stop_id):
+      problems.MissingValue("stop_id")
 
-  def __eq__(self, other):
-    if not other:
-      return False
+  def Validate(self, problems=default_problem_reporter):
+    """Validate attribute values and this object's internal consistency.
 
-    if id(self) == id(other):
-      return True
+    Returns:
+      True iff all validation checks passed.
+    """
+    found_problem = False
+    found_problem = ((not util.ValidateRequiredFieldsAreNotEmpty(
+                          self, self._REQUIRED_FIELD_NAMES, problems))
+                          or found_problem)
+    #found_problem = self.ValidateSId(problems)
 
-    return self.GetFieldValuesTuple() == other.GetFieldValuesTuple()
-
-  def __ne__(self, other):
-    return not self.__eq__(other)
-
-  def AddToSchedule(self, schedule, problems):
-    self._schedule = schedule
-    schedule.AddFareRuleObject(self, problems)
+    return not found_problem
 
   def ValidateBeforeAdd(self, problems):
     return True
 
   def ValidateAfterAdd(self, problems):
-    return
+    self.Validate(problems)
+
+  def AddToSchedule(self, schedule, problems):
+    schedule.AddBoardAlightObject(self, problems)
+
+  

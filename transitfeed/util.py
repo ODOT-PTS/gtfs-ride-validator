@@ -264,6 +264,14 @@ def ValidateURL(url, column_name=None, problems=None):
       problems.InvalidValue(column_name, url)
     return False
 
+def ValidateID(stop_id, column_name=None, problems=None):
+  if IsEmpty(stop_id):
+    return True
+  else:
+    if problems:
+      problems.InvalidValue(column_name, stop_id)
+    return False
+
 def ValidateEmail(email, column_name=None, problems=None):
   """
   checks the basic validity of email:

@@ -20,6 +20,7 @@ import agency
 import fareattribute
 import route
 import stop
+import board_alight
 
 def GetGtfsFactory(factory = None):
   if not factory:
@@ -36,5 +37,8 @@ def GetGtfsFactory(factory = None):
 
   # Stop class extension
   factory.UpdateClass('Stop', stop.Stop)
+
+  #update class extension for board_alight GTFS-Ride
+  factory.UpdateClass('Board_alight', board_alight.Board_alight)
 
   return factory

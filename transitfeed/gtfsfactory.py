@@ -104,16 +104,16 @@ class GtfsFactory(object):
         'trips.txt': { 'required': True, 'loading_order': 40,
                        'classes': ['Trip']},
 
-        'board_alight.txt': { 'required': True, 'loading_order': 110,
+        'board_alight.txt': { 'required': False, 'loading_order': 110,
                        'classes': ['Board_alight']},
 
         'ride_feed_info.txt': { 'required': True, 'loading_order': 120,
                        'classes': ['Ride_feed_info']},
 
-        'rider_trip.txt': { 'required': True, 'loading_order': 130,
+        'rider_trip.txt': { 'required': False, 'loading_order': 130,
                        'classes': ['Rider_trip']},
-                       
-        'ridership.txt': { 'required': True, 'loading_order': 140,
+
+        'ridership.txt': { 'required': False, 'loading_order': 140,
                        'classes': ['Ridership']},
 
         }

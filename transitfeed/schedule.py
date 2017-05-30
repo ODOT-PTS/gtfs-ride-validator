@@ -174,6 +174,18 @@ class Schedule(object):
       agency.Validate(problem_reporter)
     self._agencies[agency.agency_id] = agency
 
+  def AddBoardAlightObject(self,board_alight, problem_reporter=None, validate=False):
+
+    if not problem_reporter:
+      problem_reporter = self.problem_reporter
+
+    self.AddTableColumns('board_alight', board_alight._ColumnNames())
+    board_alight._schedule = weakref.proxy(self)
+
+    if validate:
+      board_alight.Validate(problem_reporter)
+    
+
   def GetAgency(self, agency_id):
     """Return Agency with agency_id or throw a KeyError"""
     return self._agencies[agency_id]
@@ -690,6 +702,15 @@ class Schedule(object):
       for t in self.trips.values():
         writer.writerow([util.EncodeUnicode(t[c]) for c in columns])
       self._WriteArchiveString(archive, 'trips.txt', trips_string)
+
+    if 'board_alight' in self._table_columns:
+      board_alight_string = StringIO.StringIO()
+      writer = util.CsvUnicodeWriter(board_alight_string)
+      columns = self.GetTableColumns('board_alight')
+      writer.writerow(columns)
+      for t in self.trips.values():
+        writer.writerow([util.EncodeUnicode(t[c]) for c in columns])
+      self._WriteArchiveString(archive, 'board_alight.txt', board_alight_string)
 
     # write frequencies.txt (if applicable)
     headway_rows = []
