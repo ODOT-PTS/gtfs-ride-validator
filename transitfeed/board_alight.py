@@ -2,13 +2,12 @@ from problems import default_problem_reporter
 from gtfsobjectbase import GtfsObjectBase
 import util
 
+
 class Board_alight(GtfsObjectBase):
   """This class represents a rule that determines which itineraries a
   fare rule applies to."""
-  _REQUIRED_FIELD_NAMES = ['stop_id']
+  _REQUIRED_FIELD_NAMES = ['stop_id','trip_id','boardings']
   _FIELD_NAMES = _REQUIRED_FIELD_NAMES + [
-                                         'trip_id',
-                                         'boardings',
                                          'alightings',
                                          'bike_boardings',
                                          'bike_alightings',
@@ -60,6 +59,64 @@ class Board_alight(GtfsObjectBase):
     if util.IsEmpty(self.stop_id):
       problems.MissingValue("stop_id")
 
+  def ValidateBoardingsHasValidValue(self, problems):
+    if self.boardings is not None:
+      try:
+        if not isinstance(self.boardings, int):
+          self.boardings = util.NonNegIntStringToInt(self.boardings, problems)
+      except (TypeError, ValueError):
+        problems.InvalidValue('boardings', self.boardings)
+
+  def ValidateAlightingsHasValidValue(self, problems):
+    if self.alightings is not None:
+      try:
+        if not isinstance(self.alightings, int):
+          self.alightings = util.NonNegIntStringToInt(self.alightings, problems)
+      except (TypeError, ValueError):
+        problems.InvalidValue('alightings', self.alightings)
+
+  def ValidateBikeBoardingsHasValidValue(self, problems):
+    if self.bike_boardings is not None:
+      try:
+        if not isinstance(self.bike_boardings, int):
+          self.bike_boardings = util.NonNegIntStringToInt(self.bike_boardings, problems)
+      except (TypeError, ValueError):
+        problems.InvalidValue('bike_boardings', self.bike_boardings)
+
+  def ValidateBikeAlightingsHasValidValue(self, problems):
+    if self.bike_alightings is not None:
+      try:
+        if not isinstance(self.bike_alightings, int):
+          self.bike_alightings = util.NonNegIntStringToInt(self.bike_alightings, problems)
+      except (TypeError, ValueError):
+        problems.InvalidValue('bike_alightings', self.bike_alightings)
+  
+  def ValidateRampBoardingsHasValidValue(self, problems):
+    if self.ramp_boardings is not None:
+      try:
+        if not isinstance(self.ramp_boardings, int):
+          self.ramp_boardings = util.NonNegIntStringToInt(self.ramp_boardings, problems)
+      except (TypeError, ValueError):
+        problems.InvalidValue('ramp_boardings', self.ramp_boardings)
+
+  def ValidateRampAlightingsHasValidValue(self, problems):
+    if self.ramp_alightings is not None:
+      try:
+        if not isinstance(self.ramp_alightings, int):
+          self.ramp_alightings = util.NonNegIntStringToInt(self.ramp_alightings, problems)
+      except (TypeError, ValueError):
+        problems.InvalidValue('ramp_alightings', self.ramp_alightings)
+
+  def validateSource(self,problems):
+    if self.source is not None:
+      if self.source != 0 or 1 or 2 or 3 or 4:
+        problems.InvalidValue('source', self.source)
+
+  def validateCurrentLoad(self,problems):
+    if self.current_load is not None:
+      if self.current_load  < 0 or self.current_load>100:
+        problems.InvalidValue('current_load', self.current_load)
+
   def Validate(self, problems=default_problem_reporter):
     """Validate attribute values and this object's internal consistency.
 
@@ -70,7 +127,15 @@ class Board_alight(GtfsObjectBase):
     found_problem = ((not util.ValidateRequiredFieldsAreNotEmpty(
                           self, self._REQUIRED_FIELD_NAMES, problems))
                           or found_problem)
-    #found_problem = self.ValidateSId(problems)
+    found_problem = self.ValidateBoardingsHasValidValue(problems)
+    found_problem = self.ValidateAlightingsHasValidValue(problems)
+    found_problem = self.ValidateBikeBoardingsHasValidValue(problems)
+    found_problem = self.ValidateBikeAlightingsHasValidValue(problems)
+    found_problem = self.ValidateRampBoardingsHasValidValue(problems)
+    found_problem = self.ValidateRampAlightingsHasValidValue(problems)
+    found_problem = self.validateSource(problems)
+    found_problem = self.validateCurrentLoad(problems)
+
 
     return not found_problem
 
