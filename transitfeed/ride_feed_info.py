@@ -1,5 +1,6 @@
 from problems import default_problem_reporter
 from gtfsobjectbase import GtfsObjectBase
+import util
 
 class Ride_feed_info(GtfsObjectBase):
   """This class represents a rule that determines which itineraries a
@@ -23,6 +24,13 @@ class Ride_feed_info(GtfsObjectBase):
   #def validateStopID(self,problems):
     #return not util.ValidateID(self.stop_id, 'stop_id', problems)
 
+  def getRideStartDate(self):
+    
+    return self.ride_start_date
+
+  def getRideEndDate(self):
+    
+    return self.ride_end_date
 
   def Validate(self, problems=default_problem_reporter):
     """Validate attribute values and this object's internal consistency.
@@ -43,3 +51,6 @@ class Ride_feed_info(GtfsObjectBase):
 
   def ValidateAfterAdd(self, problems):
     return
+
+  def AddToSchedule(self, schedule, problems):
+    schedule.AddRideTimes(self, self.ride_start_date, self.ride_end_date,problems )

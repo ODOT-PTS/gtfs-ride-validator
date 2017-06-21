@@ -461,6 +461,13 @@ def FindUniqueId(dic):
     name = str(random.randint(1000000, 999999999))
   return name
 
+def checkInProperTimeFormat(time_string):
+  accept = 1;
+  m = re.match(r'(\d{1,3}):([0-5]\d):([0-5]\d)$', time_string)
+  if not m:
+    accept = 0
+  return accept
+
 def TimeToSecondsSinceMidnight(time_string):
   """Convert HHH:MM:SS into seconds since midnight.
 
@@ -487,6 +494,13 @@ def DateStringToDateObject(date_string):
                          int(date_string[6:8]))
   except ValueError:
     return None
+
+def CheckIfInBetweenDates(dateMin,dateMax,checkDate):
+  if checkDate <= dateMax and checkDate >= dateMin:
+    return 1
+  else:
+    return 0
+    
 
 def FloatStringToFloat(float_string, problems=None):
   """Convert a float as a string to a float or raise an exception"""

@@ -1,6 +1,8 @@
 from problems import default_problem_reporter
 from gtfsobjectbase import GtfsObjectBase
 import util
+from loader import Loader
+import gtfsfactory as gtfsfactory_module
 
 
 class Board_alight(GtfsObjectBase):
@@ -15,14 +17,17 @@ class Board_alight(GtfsObjectBase):
                                          'ramp_alightings',
                                          'board_date',
                                          'board_time',
+                                         'load_type',
                                          'current_load',
                                          'source']
   _TABLE_NAME = "board_alight"
 
   def __init__(self,name=None,stop_id = None,trip_id = None,boardings=None,alightings=None,bike_boardings=None,
               bike_alightings=None,ramp_boardings=None,ramp_alightings=None,board_date=None,
-              board_time=None,current_load=None,source=None,field_dict=None,**kwargs):
+              board_time=None,load_type=None,current_load=None,source=None,field_dict=None,**kwargs):
     self._schedule = None
+    self.boardTimeMin = None
+    self.boardTimeMax = None
 
     if not field_dict:
       if stop_id:
@@ -45,6 +50,8 @@ class Board_alight(GtfsObjectBase):
         kwargs['board_date'] = board_date
       if board_time:
         kwargs['board_time'] = board_time
+      if load_type:
+        kwargs['load_type'] = load_type
       if current_load:
         kwargs['current_load'] = current_load
       if source:
@@ -58,6 +65,7 @@ class Board_alight(GtfsObjectBase):
   def ValidateSId(self, problems):
     if util.IsEmpty(self.stop_id):
       problems.MissingValue("stop_id")
+
 
   def ValidateBoardingsHasValidValue(self, problems):
     if self.boardings is not None:
@@ -117,6 +125,27 @@ class Board_alight(GtfsObjectBase):
       if self.current_load  < 0 or self.current_load>100:
         problems.InvalidValue('current_load', self.current_load)
 
+  def validateTimeFormat(self,problems):
+    if self.board_time is not None:
+      accept = util.checkInProperTimeFormat(self.board_time)
+      if accept == 0:
+        problems.UnknownTimeFormat('board_time',self.board_time)
+
+  def validateBoardDate(self,problems):
+    if self.board_date is not None:
+      date = util.DateStringToDateObject(self.board_date)
+      dateMin = util.DateStringToDateObject(self.boardTimeMin)
+      dateMax = util.DateStringToDateObject(self.boardTimeMax)
+      accept = util.CheckIfInBetweenDates(dateMin,dateMax,date)
+      if accept == 0:
+        problems.DateOutsideValidRangeGTFSRide('board_date', int(self.board_date),int(self.boardTimeMin),int(self.boardTimeMax))
+
+  def validateLoadType(self,problems):
+    if self.load_type is not None:
+      if isInstance(self.load_type,int) == False or self.load_type<0 or self.load_type > 1:
+        problems.InvalidValue('load_type', self.load_type)
+
+
   def Validate(self, problems=default_problem_reporter):
     """Validate attribute values and this object's internal consistency.
 
@@ -135,6 +164,9 @@ class Board_alight(GtfsObjectBase):
     found_problem = self.ValidateRampAlightingsHasValidValue(problems)
     found_problem = self.validateSource(problems)
     found_problem = self.validateCurrentLoad(problems)
+    found_problem = self.validateTimeFormat(problems)
+    found_problem = self.validateBoardDate(problems)
+    found_problem = self.validateLoadType(problems)
 
 
     return not found_problem

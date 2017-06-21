@@ -89,6 +89,11 @@ class ProblemReporter(object):
                       context2=self._context, type=type)
     self.AddToAccumulator(e)
 
+  def UnknownTimeFormat(self, column_name, time, reason=None,context=None, type=TYPE_ERROR):
+    e = UnknownTimeFormat(column_name = column_name,time=time,reason=reason, context=context,
+                      context2=self._context, type=type)
+    self.AddToAccumulator(e)
+
   def FileFormat(self, problem, context=None, type=TYPE_ERROR):
     e = FileFormat(problem=problem, context=context,
                    context2=self._context, type=type)
@@ -261,6 +266,15 @@ class ProblemReporter(object):
                             range_end_year, reason=None, context=None,
                             type=TYPE_ERROR):
     e = DateOutsideValidRange(column_name=column_name, value=value,
+                              reason=reason, range_start_year=range_start_year,
+                              range_end_year=range_end_year, context=context,
+                              context2=self._context, type=type)
+    self.AddToAccumulator(e)
+
+  def DateOutsideValidRangeGTFSRide(self, column_name, value, range_start_year,
+                            range_end_year, reason=None, context=None,
+                            type=TYPE_ERROR):
+    e = DateOutsideValidRangeGTFSRide(column_name=column_name, value=value,
                               reason=reason, range_start_year=range_start_year,
                               range_end_year=range_end_year, context=context,
                               context2=self._context, type=type)
@@ -557,6 +571,11 @@ class UnknownFile(ExceptionWithContext):
 class FeedNotFound(ExceptionWithContext):
   ERROR_TEXT = 'Couldn\'t find a feed named %(feed_name)s'
 
+class UnknownTimeFormat(ExceptionWithContext):
+  ERROR_TEXT = 'Wrong format for board_time. Use ##:##:## instead of %(time)s'
+  def _GetExtraOrderAttributes(self):
+    return ['value']
+
 class UnknownFormat(ExceptionWithContext):
   ERROR_TEXT = 'The feed named %(feed_name)s had an unknown format:\n' \
                'feeds should be either .zip files or directories.'
@@ -717,6 +736,14 @@ class DateOutsideValidRange(ExceptionWithContext):
                "the years %(range_start_year)d and %(range_end_year)d. It is " \
                "advisable to create feeds with shorter validity periods to " \
                "give feed consumers more confidence in their correctness."
+
+  def _GetExtraOrderAttributes(self):
+    return ['value']
+
+class DateOutsideValidRangeGTFSRide(ExceptionWithContext):
+  ERROR_TEXT = "The date %(value)s in field %(column_name)s is not between " \
+               "the years %(range_start_year)d and %(range_end_year)d."\
+               "Please ensure the dates are entered correctly"
 
   def _GetExtraOrderAttributes(self):
     return ['value']

@@ -374,7 +374,7 @@ class HTMLCountingProblemAccumulator(LimitPerTypeProblemAccumulator):
         summary = ('<span class="fail">Found these problems:</span>\n%s' %
                    self.CountTable())
     else:
-      summary = '<span class="pass">GTFS feed validated successfully</span><br><span class="pass">GTFS-Ride feed validated successfully</span>'
+      summary = '<span class="pass">feed validated successfully</span>'
 
     if self.HasNotices():
       summary = ('<h3 class="issueHeader">Notices:</h3>' + 
@@ -457,12 +457,6 @@ GTFS:<br>
 <tr><th class="header">Effective:</th><td class="header">%(dates)s</td></tr>
 </table>
 <br>
-GTFS Ride:<br>
-<table>
-<tr><th class="header">Board_alight:</th><td class="header">TODO</td></tr>
-<tr><th class="header">Ride_feed_info:</th><td class="header">TODO</td></tr>
-<tr><th class="header">Rider_trip:</th><td class="header">TODO</td></tr>
-<tr><th class="header">Ridership:</th><td class="header">TODO</td></tr>
 
 </table>
 %(calendar_summary)s

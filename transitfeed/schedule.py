@@ -67,6 +67,7 @@ class Schedule(object):
     self.fare_zones = {}  # represents the set of all known fare zones
     self.feed_info = None
     self._shapes = {}  # shape_id to Shape
+    self.ride_feed_date = []
     # A map from transfer._ID() to a list of transfers. A list is used so
     # there can be more than one transfer with each ID. Once GTFS explicitly
     # prohibits duplicate IDs this might be changed to a simple dict of
@@ -184,7 +185,17 @@ class Schedule(object):
 
     if validate:
       board_alight.Validate(problem_reporter)
+  
+  def AddRideTimes(self, ride_start, ride_end,ride_feed_info, problem_reporter=None, validate = False ):
     
+    if not problem_reporter:
+      problem_reporter = self.problem_reporter
+
+    #ride_feed_info._schedule = weakref.proxy(self)
+
+    self.ride_feed_date.append(ride_start)
+    self.ride_feed_date.append(ride_end)
+    #print('date 1 %s and date 2 %s')%(self.ride_feed_date[0],self.ride_feed_date[1])
 
   def GetAgency(self, agency_id):
     """Return Agency with agency_id or throw a KeyError"""

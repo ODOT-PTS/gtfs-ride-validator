@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import transitfeed
-
 import agency
 import fareattribute
 import route

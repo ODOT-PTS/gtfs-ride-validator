@@ -407,6 +407,7 @@ class Loader:
          not self._HasFile(filename):
         pass # File is not required, and feed does not have it.
       else:
+
         object_class = self._gtfs_factory.GetGtfsClassByFileName(filename)
         for (d, row_num, header, row) in self._ReadCsvDict(
                                        filename,
@@ -415,9 +416,23 @@ class Loader:
                                        object_class._DEPRECATED_FIELD_NAMES):
           self._problems.SetFileContext(filename, row_num, row, header)
           instance = object_class(field_dict=d)
+          instance2 = None
           instance.SetGtfsFactory(self._gtfs_factory)
           if not instance.ValidateBeforeAdd(self._problems):
             continue
+          if filename == "board_alight.txt" or filename == "rider_trip.txt" or filename == "ridership.txt":
+            filename = "ride_feed_info.txt"
+            object_class = self._gtfs_factory.GetGtfsClassByFileName(filename)
+            for (d, row_num, header, row) in self._ReadCsvDict(
+                                           filename,
+                                           object_class._FIELD_NAMES,
+                                           object_class._REQUIRED_FIELD_NAMES,
+                                           object_class._DEPRECATED_FIELD_NAMES):
+              instance2 = object_class(field_dict=d)
+              instance.boardTimeMin = instance2.getRideStartDate()
+              instance.boardTimeMax = instance2.getRideEndDate()
+
+            
           instance.AddToSchedule(self._schedule, self._problems)
           instance.ValidateAfterAdd(self._problems)
           self._problems.ClearContext()
