@@ -34,6 +34,7 @@ from board_alight import Board_alight
 from ride_feed_info import Ride_feed_info
 from rider_trip import Rider_trip
 from ridership import Ridership
+from trip_capacity import Trip_capacity
 
 class GtfsFactory(object):
   """A factory for the default GTFS objects"""
@@ -61,7 +62,8 @@ class GtfsFactory(object):
       'Board_alight':Board_alight,
       'Ride_feed_info':Ride_feed_info,
       'Rider_trip':Rider_trip,
-      'Ridership':Ridership
+      'Ridership':Ridership,
+      'Trip_capacity':Trip_capacity
     }
 
     self._file_mapping = {
@@ -115,6 +117,9 @@ class GtfsFactory(object):
 
         'ridership.txt': { 'required': False, 'loading_order': 140,
                        'classes': ['Ridership']},
+
+        'trip_capacity.txt': { 'required': False, 'loading_order': 150,
+                       'classes': ['Trip_capacity']},
 
         }
 

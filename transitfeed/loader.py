@@ -278,6 +278,62 @@ class Loader:
       d = dict(zip(header, valid_values))
       yield (d, line_num, header, valid_values)
 
+  #used to load the file but not report errors to prevent double reporting of errors
+  def _ReadCSV_NoReporting(self, file_name, cols, required, deprecated):
+    contents = self._GetUtf8Contents(file_name)
+    if not contents:
+      return
+
+    eol_checker = util.EndOfLineChecker(StringIO.StringIO(contents),
+                                   file_name, self._problems)
+    reader = csv.reader(eol_checker)  # Use excel dialect
+
+    header = reader.next()
+    header = map(lambda x: x.strip(), header)  # trim any whitespace
+    header_occurrences = util.defaultdict(lambda: 0)
+    for column_header in header:
+      header_occurrences[column_header] += 1
+
+
+    
+    # check for unrecognized columns, which are often misspellings
+    header_context = (file_name, 1, [''] * len(header), header)
+    valid_cols = cols + [deprecated_name for (deprecated_name, _) in deprecated]
+    
+
+    # check for missing required columns
+    col_index = [-1] * len(cols)
+    for i in range(len(cols)):
+      if cols[i] in header:
+        col_index[i] = header.index(cols[i])
+      
+
+    row_num = 1
+    for row in reader:
+      row_num += 1
+      if len(row) == 0:  # skip extra empty lines in file
+        continue
+
+      result = [None] * len(cols)
+      unicode_error_columns = []  # A list of column numbers with an error
+      for i in range(len(cols)):
+        ci = col_index[i]
+        if ci >= 0:
+          if len(row) <= ci:  # handle short CSV rows
+            result[i] = u''
+          else:
+            try:
+              result[i] = row[ci].decode('utf-8').strip()
+            except UnicodeDecodeError:
+              # Replace all invalid characters with
+              # REPLACEMENT CHARACTER (U+FFFD)
+              result[i] = codecs.getdecoder("utf8")(row[ci],
+                                                    errors="replace")[0].strip()
+              unicode_error_columns.append(i)
+
+      yield (result, row_num, cols)
+
+
   # TODO: Add testing for this specific function
   def _ReadCSV(self, file_name, cols, required, deprecated):
     """Reads lines from file_name, yielding a list of unicode values
@@ -303,6 +359,7 @@ class Loader:
             file_name=file_name,
             count=count)
 
+    
     # check for unrecognized columns, which are often misspellings
     header_context = (file_name, 1, [''] * len(header), header)
     valid_cols = cols + [deprecated_name for (deprecated_name, _) in deprecated]
@@ -401,6 +458,19 @@ class Loader:
     return results
 
   def _LoadFeed(self):
+    stop_time_class = self._gtfs_factory.StopTime
+    for (row, row_num, cols) in self._ReadCSV_NoReporting('stop_times.txt',
+        stop_time_class._FIELD_NAMES,
+        stop_time_class._REQUIRED_FIELD_NAMES,
+        stop_time_class._DEPRECATED_FIELD_NAMES):
+      file_context = ('stop_times.txt', row_num, row, cols)
+      self._problems.SetFileContext(*file_context)
+
+      (trip_id, arrival_time, departure_time, stop_id, stop_sequence,
+         stop_headsign, pickup_type, drop_off_type, shape_dist_traveled,
+         timepoint) = row
+      self._schedule.stop_sequences.append(stop_sequence)
+
     loading_order = self._gtfs_factory.GetLoadingOrder()
     for filename in loading_order:
       if not self._gtfs_factory.IsFileRequired(filename) and \
@@ -416,23 +486,11 @@ class Loader:
                                        object_class._DEPRECATED_FIELD_NAMES):
           self._problems.SetFileContext(filename, row_num, row, header)
           instance = object_class(field_dict=d)
+
           instance2 = None
           instance.SetGtfsFactory(self._gtfs_factory)
           if not instance.ValidateBeforeAdd(self._problems):
             continue
-          if filename == "board_alight.txt" or filename == "rider_trip.txt" or filename == "ridership.txt":
-            filename = "ride_feed_info.txt"
-            object_class = self._gtfs_factory.GetGtfsClassByFileName(filename)
-            for (d, row_num, header, row) in self._ReadCsvDict(
-                                           filename,
-                                           object_class._FIELD_NAMES,
-                                           object_class._REQUIRED_FIELD_NAMES,
-                                           object_class._DEPRECATED_FIELD_NAMES):
-              instance2 = object_class(field_dict=d)
-              instance.boardTimeMin = instance2.getRideStartDate()
-              instance.boardTimeMax = instance2.getRideEndDate()
-
-            
           instance.AddToSchedule(self._schedule, self._problems)
           instance.ValidateAfterAdd(self._problems)
           self._problems.ClearContext()
@@ -551,6 +609,7 @@ class Loader:
       (trip_id, arrival_time, departure_time, stop_id, stop_sequence,
          stop_headsign, pickup_type, drop_off_type, shape_dist_traveled,
          timepoint) = row
+      self._schedule.stop_sequences.append(stop_sequence)
 
       try:
         sequence = int(stop_sequence)
@@ -595,6 +654,8 @@ class Loader:
     self._problems.ClearContext()
     if not self._DetermineFormat():
       return self._schedule
+
+    
 
     self._CheckFileNames()
     self._LoadCalendar()

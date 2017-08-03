@@ -462,9 +462,15 @@ def FindUniqueId(dic):
   return name
 
 def checkInProperTimeFormat(time_string):
-  accept = 1;
+  accept = 1
   m = re.match(r'(\d{1,3}):([0-5]\d):([0-5]\d)$', time_string)
   if not m:
+    accept = 0
+  return accept
+
+def checkInProperDateFormat(date_string):
+  accept = 1
+  if len(date_string) != 8 or date_string.isdigit() == False:
     accept = 0
   return accept
 
@@ -496,10 +502,13 @@ def DateStringToDateObject(date_string):
     return None
 
 def CheckIfInBetweenDates(dateMin,dateMax,checkDate):
-  if checkDate <= dateMax and checkDate >= dateMin:
-    return 1
-  else:
-    return 0
+  try:
+    if checkDate <= dateMax and checkDate >= dateMin:
+      return 1
+    else:
+      return 0
+  except ValueError:
+    return None
     
 
 def FloatStringToFloat(float_string, problems=None):

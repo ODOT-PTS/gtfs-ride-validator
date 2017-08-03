@@ -28,8 +28,11 @@ class FeedInfo(transitfeed.GtfsObjectBase):
                              ('feed_timezone', None)]
   _TABLE_NAME = 'feed_info'
 
+  
+
   def __init__(self, field_dict=None):
     self._schedule = None
+    self.validGTFSDates = 1
     if field_dict:
       self.__dict__.update(field_dict)
 
@@ -56,6 +59,14 @@ class FeedInfo(transitfeed.GtfsObjectBase):
                               'feed_end_date %s is earlier than '
                               'feed_start_date "%s"' %
                               (self.feed_end_date, self.feed_start_date))
+    
+    if start_date_valid == False or end_date_valid == False:
+      self.validGTFSDates = 0
+      problems.NoValidGTFSDatesRange('feed_start_date,feed_end_date')
+    # print("CHecking dates in feedinfo")
+    # print(start_date_valid)
+    # print(end_date_valid)
+    # print(self.validGTFSDates)
 
   def ValidateBeforeAdd(self, problems):
     transitfeed.ValidateRequiredFieldsAreNotEmpty(self,
@@ -72,4 +83,4 @@ class FeedInfo(transitfeed.GtfsObjectBase):
     pass
 
   def AddToSchedule(self, schedule, problems):
-    schedule.AddFeedInfoObject(self, problems)
+    schedule.AddFeedInfoObject(self, problems,self.validGTFSDates)

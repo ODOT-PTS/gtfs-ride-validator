@@ -109,6 +109,16 @@ class ProblemReporter(object):
                   context2=self._context, type=type)
     self.AddToAccumulator(e)
 
+  def NoValidGTFSDatesRange(self,reason=None,context=None, type=TYPE_WARNING):
+    e = NoValidGTFSDatesRange(reason=reason, context=context,
+                      context2=self._context, type=type)
+    self.AddToAccumulator(e)
+
+  def NoValidRideDatesRange(self,reason=None,context=None, type=TYPE_WARNING):
+    e = NoValidRideDatesRange(reason=reason, context=context,
+                      context2=self._context, type=type)
+    self.AddToAccumulator(e)
+
   def EmptyFile(self, file_name, context=None, type=TYPE_ERROR):
     e = EmptyFile(file_name=file_name, context=context,
                   context2=self._context, type=type)
@@ -567,6 +577,12 @@ class UnknownFile(ExceptionWithContext):
                'This may be a misspelled file name or the file may be ' \
                'included in a subdirectory. Please check spellings and ' \
                'make sure that there are no subdirectories within the feed'
+
+class NoValidGTFSDatesRange(ExceptionWithContext):
+  ERROR_TEXT = "There is not a complete GTFS feed date interval to check date range adherance"
+  
+class NoValidRideDatesRange(ExceptionWithContext):
+  ERROR_TEXT = "There is not a complete GTFS Ride feed date interval to check date range adherance"
 
 class FeedNotFound(ExceptionWithContext):
   ERROR_TEXT = 'Couldn\'t find a feed named %(feed_name)s'

@@ -57,11 +57,16 @@ class Schedule(object):
 
     # Map from table name to list of columns present in this schedule
     self._table_columns = {}
+    self.validDates = 0
+    self.validRideDates = 0
 
+    self.direction_ids = []
+    self.stop_sequences = []
     self._agencies = {}
     self.stops = {}
     self.routes = {}
     self.trips = {}
+    self.boardTrips = {}
     self.service_periods = {}
     self.fares = {}
     self.fare_zones = {}  # represents the set of all known fare zones
@@ -183,19 +188,28 @@ class Schedule(object):
     self.AddTableColumns('board_alight', board_alight._ColumnNames())
     board_alight._schedule = weakref.proxy(self)
 
+    #board_alight.trips = self.trips.values()
+
     if validate:
       board_alight.Validate(problem_reporter)
   
-  def AddRideTimes(self, ride_start, ride_end,ride_feed_info, problem_reporter=None, validate = False ):
-    
+  def AddRideTimes(self,ride_feed_info, problem_reporter=None,validRideDates = None, validate = False ):
+    self.validRideDates = validRideDates
+
     if not problem_reporter:
       problem_reporter = self.problem_reporter
 
-    #ride_feed_info._schedule = weakref.proxy(self)
+    ride_feed_info._schedule = weakref.proxy(self)
 
-    self.ride_feed_date.append(ride_start)
-    self.ride_feed_date.append(ride_end)
-    #print('date 1 %s and date 2 %s')%(self.ride_feed_date[0],self.ride_feed_date[1])
+    # print("checking valid gtfs dates flag")
+    # print(self.validDates)
+
+    # print("checking valid ride dates flag")
+    # print(self.validRideDates)
+
+    self.ride_feed_date.append(ride_feed_info.ride_start_date)
+    self.ride_feed_date.append(ride_feed_info.ride_end_date)
+    
 
   def GetAgency(self, agency_id):
     """Return Agency with agency_id or throw a KeyError"""
@@ -469,6 +483,8 @@ class Schedule(object):
       problem_reporter.DuplicateID('trip_id', trip.trip_id)
       return
 
+    self.direction_ids.append(trip.direction_id)
+
     self.AddTableColumns('trips', trip._ColumnNames())
     trip._schedule = weakref.proxy(self)
     self.trips[trip.trip_id] = trip
@@ -555,13 +571,15 @@ class Schedule(object):
                                     'of the IDs defined in the '
                                     'fare attributes.)')
 
-  def AddFeedInfoObject(self, feed_info, problem_reporter=None, validate=False):
+  def AddFeedInfoObject(self, feed_info, problem_reporter=None,validGTFSDates=None, validate=False):
     assert feed_info._schedule is None
+    self.validDates = validGTFSDates
 
     if not problem_reporter:
       problem_reporter = self.problem_reporter
 
     feed_info._schedule = weakref.proxy(self)
+    
 
     if validate:
       feed_info.Validate(problem_reporter)
