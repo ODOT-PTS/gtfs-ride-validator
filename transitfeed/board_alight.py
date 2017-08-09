@@ -234,6 +234,8 @@ class Board_alight(GtfsObjectBase):
       problems.UnknownTimeFormat('service_departure_time',self.service_departure_time)
 
   def validateServiceDate(self,problems):
+    if util.IsEmpty(self.service_date):
+      return
     valid_date = util.ValidateDate(self.service_date,
                                                'service_date', problems)
     if self._schedule.validRideDates == 0:
