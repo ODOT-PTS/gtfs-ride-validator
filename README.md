@@ -2,7 +2,7 @@
 
 Provides a library to help you parse and validate [GTFS-Ride](https://github.com/ODOT-PTS/GTFS-ride) feed files.  
 
-#Macosx#
+# Macosx
 To install, either clone the repo using git or download the repo using the download feature.
 
 Make sure that python is installed on your machine before running the feedvalidator. This tool was developed and tested with python 2.7. Other versions may not work.
@@ -10,7 +10,7 @@ Make sure that python is installed on your machine before running the feedvalida
 To run the feedvalidator.py script open up the terminal and navigate to the directory that contains the feedvalidator.py script. Once there enter the following command:
 python feedvalidator_ride.py location/of/feed/to/be/validated
 
-#Windows#
+# Windows
 To install, locate the feedvalidator_ride.exe file in this repo, select it, then download.
 Running the application is as simple as double clicking on the executable once downloaded.
 
