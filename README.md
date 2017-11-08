@@ -1,6 +1,6 @@
 # transitfeed-ride
 
-Provides a library to help you parse and validate [GTFS-Ride](https://github.com/ODOT-PTS/GTFS-ride) feed files. 
+Provides a library to help you parse and validate [GTFS-ride](https://github.com/ODOT-PTS/GTFS-ride) feed files. 
 The validator generates an html report with a summary of the feed. 
 
 ## Macosx and Windows
