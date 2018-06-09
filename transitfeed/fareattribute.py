@@ -22,7 +22,7 @@ class FareAttribute(GtfsObjectBase):
   """Represents a fare type."""
   _REQUIRED_FIELD_NAMES = ['fare_id', 'price', 'currency_type',
                            'payment_method', 'transfers']
-  _FIELD_NAMES = _REQUIRED_FIELD_NAMES + ['transfer_duration']
+  _FIELD_NAMES = _REQUIRED_FIELD_NAMES + ['agency_id','transfer_duration']
   _TABLE_NAME = "fare_attributes"
 
   def __init__(self,
