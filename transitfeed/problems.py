@@ -132,7 +132,7 @@ class ProblemReporter(object):
     self.AddToAccumulator(e)
 
   def UnrecognizedColumn(self, file_name, column_name, context=None,
-                         type=TYPE_WARNING):
+                         type=TYPE_ERROR):
     e = UnrecognizedColumn(file_name=file_name, column_name=column_name,
                            context=context, context2=self._context, type=type)
     self.AddToAccumulator(e)
