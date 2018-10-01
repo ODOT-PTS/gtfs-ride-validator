@@ -26,7 +26,7 @@ class Route(GtfsObjectBase):
     ]
   _FIELD_NAMES = _REQUIRED_FIELD_NAMES + [
     'agency_id', 'route_desc', 'route_url', 'route_color', 'route_text_color',
-    'bikes_allowed'
+    'bikes_allowed','route_sort_order'
     ]
   _ROUTE_TYPES = {
     0: {'name':'Tram', 'max_speed':100},
