@@ -16,6 +16,7 @@
 
 """Unit tests for the merge module."""
 from __future__ import absolute_import
+from __future__ import print_function
 
 __author__ = 'timothy.stranex@gmail.com (Timothy Stranex)'
 
@@ -290,7 +291,7 @@ class TestSchemedMerge(util.TestCase):
 
     try:
       self.ds._SchemedMerge(scheme, a, b)
-    except merge.MergeError, merge_error:
+    except merge.MergeError as merge_error:
       error_text = str(merge_error)
       self.assert_(reason in error_text)
       self.assert_(attribute_name in error_text)
@@ -779,7 +780,7 @@ class TestStopMerger(util.TestCase):
     try:
       self.fm.MergeSchedules()
       self.fail("Expecting MergeError")
-    except merge.SameIdButNotMerged, merge_error:
+    except merge.SameIdButNotMerged as merge_error:
       self.assertTrue(("%s" % merge_error).find("location_type") != -1)
 
   def AssertS1ParentIsS2(self):
@@ -1545,7 +1546,7 @@ class MergeInSubprocessTestCase(util.TempDirTestCaseBase):
          future_good_feed,
          os.path.join(self.tempdirpath, 'merged.zip')],
         expected_retcode=0)
-    print out
+    print(out)
     htmlout = open('merge-results.html').read()
     self.assertTrue(re.search(r'A new version 100.100.100', htmlout))
 
