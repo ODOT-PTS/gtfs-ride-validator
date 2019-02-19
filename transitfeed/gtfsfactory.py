@@ -14,27 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from agency import Agency
-from fareattribute import FareAttribute
-from farerule import FareRule
-from feedinfo import FeedInfo
-from frequency import Frequency
-from loader import Loader
-import problems
-from route import Route
-from schedule import Schedule
-from serviceperiod import ServicePeriod
-from shape import Shape
-from shapepoint import ShapePoint
-from stop import Stop
-from stoptime import StopTime
-from transfer import Transfer
-from trip import Trip
-from board_alight import Board_alight
-from ride_feed_info import Ride_feed_info
-from rider_trip import Rider_trip
-from ridership import Ridership
-from trip_capacity import Trip_capacity
+
+from __future__ import absolute_import
+from .agency import Agency
+from .fareattribute import FareAttribute
+from .farerule import FareRule
+from .feedinfo import FeedInfo
+from .frequency import Frequency
+from .loader import Loader
+from . import problems
+from .route import Route
+from .schedule import Schedule
+from .serviceperiod import ServicePeriod
+from .shape import Shape
+from .shapepoint import ShapePoint
+from .stop import Stop
+from .stoptime import StopTime
+from .transfer import Transfer
+from .trip import Trip
+from .board_alight import Board_alight
+from .ride_feed_info import Ride_feed_info
+from .rider_trip import Rider_trip
+from .ridership import Ridership
+from .trip_capacity import Trip_capacity
 
 class GtfsFactory(object):
   """A factory for the default GTFS objects"""

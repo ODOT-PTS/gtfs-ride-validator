@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import bisect
 import cStringIO as StringIO
 import datetime
@@ -39,10 +40,10 @@ import warnings
 import weakref
 import zipfile
 
-import gtfsfactory
-import problems as problems_module
-from transitfeed.util import defaultdict
-import util
+from . import gtfsfactoryuser
+from . import problems as problems_module
+from .util import defaultdict
+from . import util
 
 class Schedule(object):
   """Represents a Schedule, a collection of stops, routes, trips and
@@ -52,7 +53,9 @@ class Schedule(object):
                memory_db=True, check_duplicate_trips=False,
                gtfs_factory=None):
     if gtfs_factory is None:
-      gtfs_factory = gtfsfactory.GetGtfsFactory()
+      # This hackery is due to the cyclic dependency mess we currently have.
+      # See gtfsfactoryuser for more.
+      gtfs_factory = gtfsfactoryuser.GtfsFactoryUser().GetGtfsFactory()
     self._gtfs_factory = gtfs_factory
 
     # Map from table name to list of columns present in this schedule
@@ -583,6 +586,7 @@ class Schedule(object):
 
     if validate:
       feed_info.Validate(problem_reporter)
+    self.AddTableColumns('feed_info', feed_info._ColumnNames())
     self.feed_info = feed_info
 
   def AddTransferObject(self, transfer, problem_reporter=None):
@@ -652,7 +656,7 @@ class Schedule(object):
     zi = zipfile.ZipInfo(filename)
     # See
     # http://stackoverflow.com/questions/434641/how-do-i-set-permissions-attributes-on-a-file-in-a-zip-file-using-pythons-zipf
-    zi.external_attr = 0666 << 16L  # Set unix permissions to -rw-rw-rw
+    zi.external_attr = 0o666 << 16  # Set unix permissions to -rw-rw-rw
     # ZIP_DEFLATED requires zlib. zlib comes with Python 2.4 and 2.5
     zi.compress_type = zipfile.ZIP_DEFLATED
     archive.writestr(zi, stringio.getvalue())
@@ -677,6 +681,15 @@ class Schedule(object):
       for a in self._agencies.values():
         writer.writerow([util.EncodeUnicode(a[c]) for c in columns])
       self._WriteArchiveString(archive, 'agency.txt', agency_string)
+
+
+    if 'feed_info' in self._table_columns:
+      feed_info_string = StringIO.StringIO()
+      writer = util.CsvUnicodeWriter(feed_info_string)
+      columns = self.GetTableColumns('feed_info')
+      writer.writerow(columns)
+      writer.writerow([util.EncodeUnicode(self.feed_info[c]) for c in columns])
+      self._WriteArchiveString(archive, 'feed_info.txt', feed_info_string)
 
     calendar_dates_string = StringIO.StringIO()
     writer = util.CsvUnicodeWriter(calendar_dates_string)

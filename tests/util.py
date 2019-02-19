@@ -16,6 +16,7 @@
 
 # Code shared between tests.
 from __future__ import absolute_import
+from __future__ import print_function
 
 import dircache
 import os
@@ -56,7 +57,7 @@ def check_call(cmd, expected_retcode=0, stdin_str="", **kwargs):
                          **kwargs)
     (out, err) = p.communicate(stdin_str)
     retcode = p.returncode
-  except Exception, e:
+  except Exception as e:
     raise Exception("When running %s: %s" % (cmd, e))
   if retcode < 0:
     raise Exception(
@@ -329,7 +330,7 @@ class MemoryZipTestCase(TestCase):
     # Handy for debugging
     z = zipfile.ZipFile(zf)
     for n in z.namelist():
-      print "--\n%s\n%s" % (n, z.read(n))
+      print("--\n%s\n%s" % (n, z.read(n)))
 
 
 class LoadTestCase(TestCase):
