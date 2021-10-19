@@ -17,4 +17,6 @@ To run the feedvalidator tool, double click on the executable file.
 
 You can also drag the zipped file onto the executable to validate a feed. If the executable is run on its own, you will be promted to enter the location of your feed file.
 
+## How to Use
 
+[Feed Validator Tutorial Video](https://www.gtfs-ride.org/assets/videos/FeedValidator_Tutorial.mp4) - How to use the GTFS-ride Feed Validator.
