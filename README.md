@@ -19,4 +19,8 @@ You can also drag the zipped file onto the executable to validate a feed. If the
 
 ## How to Use
 
-[Feed Validator Tutorial Video](https://www.gtfs-ride.org/assets/videos/FeedValidator_Tutorial.mp4) - How to use the GTFS-ride Feed Validator.
+A short video on how to use the GTFS-ride Feed Validator.
+
+https://user-images.githubusercontent.com/96217/158732199-2f5f1581-e13a-4e12-9166-55a321ab618e.mp4
+
+
